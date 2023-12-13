@@ -33,4 +33,8 @@ public partial class AllNotesPage : ContentPage
             notesCollection.SelectedItem = null;
         }
     }
+    private void ContentPage_NavigatedTo(object sender, NavigatedToEventArgs e)
+    {
+        notesCollection.SelectedItem = null;
+    }
 }

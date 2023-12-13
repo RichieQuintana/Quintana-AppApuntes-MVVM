@@ -49,11 +49,13 @@ namespace Quintana_AppApuntes.ViewModels
 
                 // If note is found, update it
                 if (matchedNote != null)
+                {
                     matchedNote.Reload();
-
+                    AllNotes.Move(AllNotes.IndexOf(matchedNote), 0);
+                }
                 // If note isn't found, it's new; add it.
                 else
-                    AllNotes.Add(new NoteViewModel(Note.Load(noteId)));
+                    AllNotes.Insert(0, new NoteViewModel(Models.Note.Load(noteId)));
             }
         }
     }
