@@ -57,9 +57,13 @@ namespace Quintana_AppApuntes.ViewModels
             _note.Delete();
             await Shell.Current.GoToAsync($"..?deleted={_note.Filename}");
         }
-        public void ApplyQueryAttributes(IDictionary<string, object> query)
+        void IQueryAttributable.ApplyQueryAttributes(IDictionary<string, object> query)
         {
-            throw new NotImplementedException();
+            if (query.ContainsKey("load"))
+            {
+                _note = Models.Note.Load(query["load"].ToString());
+                RefreshProperties();
+            }
         }
         public void Reload()
         {
