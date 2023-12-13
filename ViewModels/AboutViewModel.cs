@@ -7,8 +7,8 @@ using System.Threading.Tasks;
 using System.Windows.Input;
 
 
-namespace Quintana_AppApuntes.ViewModels
-{
+namespace Quintana_AppApuntes.ViewModels;
+
     internal class AboutViewModel
     {
         public string Title => AppInfo.Name;
@@ -25,4 +25,3 @@ namespace Quintana_AppApuntes.ViewModels
         async Task ShowMoreInfo() =>
             await Launcher.Default.OpenAsync(MoreInfoUrl);
     }
-}

@@ -58,4 +58,3 @@ namespace Quintana_AppApuntes.Models
                     .OrderByDescending(note => note.Date);
         }
     }
-}

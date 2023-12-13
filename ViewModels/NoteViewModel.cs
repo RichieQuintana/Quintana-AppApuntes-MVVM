@@ -7,8 +7,8 @@ using CommunityToolkit.Mvvm.Input;
 using System.Windows.Input;
 using CommunityToolkit.Mvvm.ComponentModel;
 
-namespace Quintana_AppApuntes.ViewModels
-{
+namespace Quintana_AppApuntes.ViewModels;
+
     internal class NoteViewModel : ObservableObject, IQueryAttributable
     {
         private Models.Note _note;
@@ -29,8 +29,10 @@ namespace Quintana_AppApuntes.ViewModels
         public DateTime Date => _note.Date;
 
         public string Identifier => _note.Filename;
+
         public ICommand SaveCommand { get; private set; }
         public ICommand DeleteCommand { get; private set; }
+
         public NoteViewModel()
         {
             _note = new Models.Note();
@@ -76,6 +78,4 @@ namespace Quintana_AppApuntes.ViewModels
             OnPropertyChanged(nameof(Text));
             OnPropertyChanged(nameof(Date));
         }
-    }
-
 }
