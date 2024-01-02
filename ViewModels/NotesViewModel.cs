@@ -9,53 +9,56 @@ using System.Windows.Input;
 using Quintana_AppApuntes.Models;
 
 namespace Quintana_AppApuntes.ViewModels;
-    internal class NotesViewModel : IQueryAttributable
+internal class NotesViewModel : IQueryAttributable
+{
+    public ObservableCollection<ViewModels.NoteViewModel> AllNotes { get; }
+    public ICommand NewCommand { get; }
+    public ICommand SelectNoteCommand { get; }
+
+    public NotesViewModel()
     {
-        public ObservableCollection<ViewModels.NoteViewModel> AllNotes { get; }
-        public ICommand NewCommand { get; }
-        public ICommand SelectNoteCommand { get; }
+        AllNotes = new ObservableCollection<ViewModels.NoteViewModel>(Models.Note.LoadAll().Select(n => new NoteViewModel(n)));
+        NewCommand = new AsyncRelayCommand(NewNoteAsync);
+        SelectNoteCommand = new AsyncRelayCommand<ViewModels.NoteViewModel>(SelectNoteAsync);
+    }
 
-        public NotesViewModel()
+    private async Task NewNoteAsync()
+    {
+        await Shell.Current.GoToAsync(nameof(Views.NotePage));
+    }
+
+    private async Task SelectNoteAsync(ViewModels.NoteViewModel note)
+    {
+        if (note != null)
+            await Shell.Current.GoToAsync($"{nameof(Views.NotePage)}?load={note.Identifier}");
+    }
+
+    void IQueryAttributable.ApplyQueryAttributes(IDictionary<string, object> query)
+    {
+        if (query.ContainsKey("deleted"))
         {
-            AllNotes = new ObservableCollection<ViewModels.NoteViewModel>(Models.Note.LoadAll().Select(n => new NoteViewModel(n)));
-            NewCommand = new AsyncRelayCommand(NewNoteAsync);
-            SelectNoteCommand = new AsyncRelayCommand<ViewModels.NoteViewModel>(SelectNoteAsync);
+            string noteId = query["deleted"].ToString();
+            NoteViewModel matchedNote = AllNotes.Where((n) => n.Identifier == noteId).FirstOrDefault();
+
+            // If note exists, delete it
+            if (matchedNote != null)
+                AllNotes.Remove(matchedNote);
         }
-
-        private async Task NewNoteAsync()
+        else if (query.ContainsKey("saved"))
         {
-            await Shell.Current.GoToAsync(nameof(Views.NotePage));
-        }
+            string noteId = query["saved"].ToString();
+            NoteViewModel matchedNote = AllNotes.Where((n) => n.Identifier == noteId).FirstOrDefault();
 
-        private async Task SelectNoteAsync(ViewModels.NoteViewModel note)
-        {
-            if (note != null)
-                await Shell.Current.GoToAsync($"{nameof(Views.NotePage)}?load={note.Identifier}");
-        }
-
-        void IQueryAttributable.ApplyQueryAttributes(IDictionary<string, object> query)
-        {
-            if (query.ContainsKey("deleted"))
+            // If note is found, update it
+            if (matchedNote != null)
             {
-                string noteId = query["deleted"].ToString();
-                NoteViewModel matchedNote = AllNotes.Where((n) => n.Identifier == noteId).FirstOrDefault();
-
-                // If note exists, delete it
-                if (matchedNote != null)
-                    AllNotes.Remove(matchedNote);
+                matchedNote.Reload();
+                AllNotes.Move(AllNotes.IndexOf(matchedNote), 0);
             }
-            else if (query.ContainsKey("saved"))
-            {
-                string noteId = query["saved"].ToString();
-                NoteViewModel matchedNote = AllNotes.Where((n) => n.Identifier == noteId).FirstOrDefault();
 
-                // If note is found, update it
-                if (matchedNote != null)
-                    matchedNote.Reload();
-
-                // If note isn't found, it's new; add it.
-                else
-                AllNotes.Add(new NoteViewModel(Note.Load(noteId)));
-            }
+            // If note isn't found, it's new; add it.
+            else
+                AllNotes.Insert(0, new NoteViewModel(Models.Note.Load(noteId)));
         }
     }
+}

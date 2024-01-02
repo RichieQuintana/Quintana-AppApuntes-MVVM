@@ -2,8 +2,8 @@ namespace Quintana_AppApuntes.Views;
 
 public partial class NotePage : ContentPage
 {
-	public NotePage()
-	{
+    public NotePage()
+    {
         InitializeComponent();
     }
 }

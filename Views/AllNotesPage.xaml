@@ -17,12 +17,12 @@
 
     <!-- Display notes in a list -->
     <CollectionView x:Name="notesCollection"
-                        ItemsSource="{Binding AllNotes}"
-                        Margin="20"
+                    ItemsSource="{Binding AllNotes}"
+                    Margin="20"
                     SelectionMode="Single"
-                        SelectionChangedCommand="{Binding SelectNoteCommand}"
-                        SelectionChangedCommandParameter="{Binding Source={RelativeSource Self}, Path=SelectedItem}">
-
+                SelectionChangedCommand="{Binding SelectNoteCommand}"
+                SelectionChangedCommandParameter="{Binding Source={RelativeSource Self}, Path=SelectedItem}">
+        
         <!-- Designate how the collection of items are laid out -->
         <CollectionView.ItemsLayout>
             <LinearItemsLayout Orientation="Vertical" ItemSpacing="10" />
